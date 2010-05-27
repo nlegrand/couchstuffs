@@ -1,0 +1,4 @@
+#!/bin/sh
+
+curl -sX DELETE http://localhost:5984/$1
+
