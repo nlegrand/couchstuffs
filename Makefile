@@ -9,9 +9,11 @@ install:
 	${INSTALL} couchget ${DESTDIR}
 	${INSTALL} couchdel ${DESTDIR}
 	${INSTALL} couchput ${DESTDIR}
+	${INSTALL} jsonize ${DESTDIR}
 
 clean:
 	rm ${DESTDIR}/couchattach
 	rm ${DESTDIR}/couchget
 	rm ${DESTDIR}/couchdel
 	rm ${DESTDIR}/couchput
+	rm ${DESTDIR}/jsonize

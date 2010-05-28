@@ -1,0 +1,6 @@
+#!/usr/local/bin/python2.6
+
+import sys, json
+
+
+print json.dumps({sys.argv[1]:open(sys.argv[2]).read()})
