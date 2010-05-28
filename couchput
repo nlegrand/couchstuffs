@@ -1,4 +1,4 @@
 #!/bin/sh
 
-curl -sX PUT http://localhost:5984/$1
+curl -sX PUT http://localhost:5984/$*
 
