@@ -1,0 +1,19 @@
+#!/usr/local/bin/python2.6
+
+import sys, fileinput, json
+
+json_data = ""
+
+for line in fileinput.input():
+    json_data = json_data + line
+
+doc = json.loads(json_data)
+
+for key in doc:
+    if key != '_attachments':
+        f = open(key, 'w')
+        if key != 'tags':
+            f.write(doc[key].encode("utf-8"))
+        else:
+            for tag in doc[key]:
+                f.write(tag.encode("utf-8") + "\n")
