@@ -1,6 +1,6 @@
 #!/usr/local/bin/python2.6
 
-import sys, fileinput, json
+import os, fileinput, json, base64
 
 json_data = ""
 
@@ -17,3 +17,14 @@ for key in doc:
         else:
             for tag in doc[key]:
                 f.write(tag.encode("utf-8") + "\n")
+    else:
+        if not os.path.exists("_attachment"):
+            os.makedirs("_attachment")
+        for attachment in doc[key]:
+            if not "stub" in doc[key][attachment]:
+                f = open("_attachment/" + attachment, 'wb')
+                data = base64.b64decode(doc[key][attachment]['data'])
+                f.write(data)
+
+            
+            

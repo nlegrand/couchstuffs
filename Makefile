@@ -10,6 +10,7 @@ install:
 	${INSTALL} couchdel ${DESTDIR}
 	${INSTALL} couchput ${DESTDIR}
 	${INSTALL} jsonize ${DESTDIR}
+	${INSTALL} dejsonize ${DESTDIR}
 
 clean:
 	rm ${DESTDIR}/couchattach
@@ -17,3 +18,4 @@ clean:
 	rm ${DESTDIR}/couchdel
 	rm ${DESTDIR}/couchput
 	rm ${DESTDIR}/jsonize
+	rm ${DESTDIR}/dejsonize
