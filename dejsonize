@@ -12,11 +12,7 @@ doc = json.loads(json_data)
 for key in doc:
     if key != '_attachments':
         f = open(key, 'w')
-        if key != 'tags':
-            f.write(doc[key].encode("utf-8"))
-        else:
-            for tag in doc[key]:
-                f.write(tag.encode("utf-8") + "\n")
+        f.write(json.dumps(doc[key],indent=4))
     else:
         if not os.path.exists("_attachment"):
             os.makedirs("_attachment")
