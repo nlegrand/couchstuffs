@@ -1,0 +1,46 @@
+#!/usr/local/bin/python2.6
+
+import os, fileinput, json, base64, subprocess, sys, mimetypes, httplib
+
+
+id = sys.argv[1]
+file = sys.argv[2]
+file_prefix = os.path.splitext(file)[0]
+
+command = "/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg"
+
+
+os.system("/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg")
+os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + file_prefix + "-medium.jpg")
+os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + file_prefix + "-large.jpg")
+
+data = {}
+
+data['_attachments'] = {
+    file : {
+        "content_type" : mimetypes.guess_type(file)[0],
+        "data" : base64.b64encode(open(file, 'rb').read()),
+        },
+    file_prefix + "-thumbnail.jpg" : {
+        "content_type" : mimetypes.guess_type(file_prefix + "-thumbnail.jpg")[0],
+        "data" : base64.b64encode(open(file_prefix + "-thumbnail.jpg", 'rb').read()),
+        },
+    file_prefix + "-medium.jpg" : {
+        "content_type" : mimetypes.guess_type(file_prefix + "-medium.jpg")[0],
+        "data" : base64.b64encode(open(file_prefix + "-medium.jpg", 'rb').read()),
+        },
+    file_prefix + "-large.jpg" : {
+        "content_type" : mimetypes.guess_type(file_prefix + "-large.jpg")[0],
+        "data" : base64.b64encode(open(file_prefix + "-large.jpg", 'rb').read()),
+        },
+    }
+
+
+conn = httplib.HTTPConnection("localhost:5984")
+conn.request("PUT","/images/" + id,
+             json.dumps(data), {"Content-type": "application/json"})
+r1 = conn.getresponse()
+
+print r1.status, r1.reason
+print r1.read()
+
