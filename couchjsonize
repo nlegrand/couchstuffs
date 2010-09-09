@@ -1,0 +1,25 @@
+#!/usr/local/bin/python2.6
+
+import sys, json, os, httplib, pprint, urllib, re, mimetypes, base64
+
+json_data = {}
+
+for file in os.listdir("."):
+    if not re.search("~$", file) and file != '_attachments':
+        f = open(file, "r")
+        json_data[file] = json.loads(f.read())
+    elif file == '_attachments':
+        json_data['_attachments'] = {}
+        for attachment in os.listdir('_attachments'):
+            mime = mimetypes.guess_type('_attachments' + attachment)[0]
+            b = open('_attachments/' + attachment, 'rb')
+            content = base64.b64encode(b.read())
+            json_data['_attachments'][attachment] = {
+                "content_type" : mime,
+                "data" : content
+                }
+        
+
+print json.dumps(json_data)
+
+

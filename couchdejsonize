@@ -14,11 +14,11 @@ for key in doc:
         f = open(key, 'w')
         f.write(json.dumps(doc[key],indent=4))
     else:
-        if not os.path.exists("_attachment"):
-            os.makedirs("_attachment")
+        if not os.path.exists("_attachments"):
+            os.makedirs("_attachments")
         for attachment in doc[key]:
             if not "stub" in doc[key][attachment]:
-                f = open("_attachment/" + attachment, 'wb')
+                f = open("_attachments/" + attachment, 'wb')
                 data = base64.b64decode(doc[key][attachment]['data'])
                 f.write(data)
 

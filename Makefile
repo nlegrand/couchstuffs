@@ -9,13 +9,15 @@ install:
 	${INSTALL} couchget ${DESTDIR}
 	${INSTALL} couchdel ${DESTDIR}
 	${INSTALL} couchput ${DESTDIR}
-	${INSTALL} jsonize ${DESTDIR}
-	${INSTALL} dejsonize ${DESTDIR}
+	${INSTALL} couchjsonize ${DESTDIR}
+	${INSTALL} couchdejsonize ${DESTDIR}
+	${INSTALL} couchaddimage ${DESTDIR}
 
 clean:
 	rm ${DESTDIR}/couchattach
 	rm ${DESTDIR}/couchget
 	rm ${DESTDIR}/couchdel
 	rm ${DESTDIR}/couchput
-	rm ${DESTDIR}/jsonize
-	rm ${DESTDIR}/dejsonize
+	rm ${DESTDIR}/couchjsonize
+	rm ${DESTDIR}/couchdejsonize
+	rm ${DESTDIR}/couchaddimage
