@@ -5,9 +5,20 @@ import sys, json, os, httplib, pprint, urllib, re, mimetypes, base64
 json_data = {}
 
 for file in os.listdir("."):
-    if not re.search("~$", file) and file != '_attachments':
-        f = open(file, "r")
-        json_data[file] = json.loads(f.read())
+    if file == 'views':
+        for view in os.listdir(file):
+            f = open(os.path.join(file, view, 'map.js'),'r')
+            map = re.sub('"', '\"',f.read())
+            f.close()
+            if os.path.isfile(os.path.join(file, view, 'map.js')):
+                f = open(file + '/' + view + '/map.js','r')
+                reduce = re.sub('"', '\"',f.read())
+                f.close()
+            json_data['views'] = {view : { 'map' : map}}
+            if reduce:
+                json_data['views'][view]['reduce'] = reduce
+    elif not re.search("~$", file) and file != '_attachments':
+         json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':
         json_data['_attachments'] = {}
         for attachment in os.listdir('_attachments'):

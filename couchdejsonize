@@ -1,6 +1,6 @@
 #!/usr/local/bin/python2.6
 
-import os, fileinput, json, base64
+import os, fileinput, json, base64, re
 
 json_data = ""
 
@@ -8,17 +8,21 @@ for line in fileinput.input():
     json_data = json_data + line
 
 doc = json.loads(json_data)
+dir = doc['_id'] + "/"
+
+if not os.path.exists(dir) and not re.search("/design",dir):
+   os.mkdir(dir)
 
 for key in doc:
     if key != '_attachments':
-        f = open(key, 'w')
+        f = open(dir + key, 'w')
         f.write(json.dumps(doc[key],indent=4))
     else:
-        if not os.path.exists("_attachments"):
-            os.makedirs("_attachments")
+        if not os.path.exists(dir + "_attachments"):
+            os.mkdir(dir + "_attachments")
         for attachment in doc[key]:
             if not "stub" in doc[key][attachment]:
-                f = open("_attachments/" + attachment, 'wb')
+                f = open(dir + "_attachments/" + attachment, 'wb')
                 data = base64.b64decode(doc[key][attachment]['data'])
                 f.write(data)
 

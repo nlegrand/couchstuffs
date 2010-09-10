@@ -12,6 +12,7 @@ install:
 	${INSTALL} couchjsonize ${DESTDIR}
 	${INSTALL} couchdejsonize ${DESTDIR}
 	${INSTALL} couchaddimage ${DESTDIR}
+	${INSTALL} couchgetid ${DESTDIR}
 
 clean:
 	rm ${DESTDIR}/couchattach
@@ -21,3 +22,4 @@ clean:
 	rm ${DESTDIR}/couchjsonize
 	rm ${DESTDIR}/couchdejsonize
 	rm ${DESTDIR}/couchaddimage
+	rm ${DESTDIR}/couchgetid

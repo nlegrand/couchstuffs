@@ -1,11 +1,13 @@
 #!/usr/local/bin/python2.6
 
-import os, fileinput, json, base64, subprocess, sys, mimetypes, httplib
+import os, json, base64, subprocess, sys, mimetypes, httplib
 
 
-id = sys.argv[1]
-file = sys.argv[2]
+file = sys.argv.pop()
 file_prefix = os.path.splitext(file)[0]
+id = sys.argv.pop()
+
+data = {}
 
 command = "/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg"
 
@@ -13,8 +15,6 @@ command = "/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file
 os.system("/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg")
 os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + file_prefix + "-medium.jpg")
 os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + file_prefix + "-large.jpg")
-
-data = {}
 
 data['_attachments'] = {
     file : {
