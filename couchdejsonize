@@ -8,23 +8,28 @@ for line in fileinput.input():
     json_data = json_data + line
 
 doc = json.loads(json_data)
-dir = doc['_id'] + "/"
+dir = re.sub("/",".", doc['_id'])
 
-if not os.path.exists(dir) and not re.search("/design",dir):
+if not os.path.exists(dir):
    os.mkdir(dir)
 
 for key in doc:
-    if key != '_attachments':
-        f = open(dir + key, 'w')
-        f.write(json.dumps(doc[key],indent=4))
+    if key == 'views' or key == 'shows':
+        for view in doc[key]:
+            if not os.path.exists(os.path.join(os.path.join(dir, key, view))):
+                os.makedirs(os.path.join(dir, key, view))
+            for js in doc[key][view]:
+                f = open(os.path.join(dir, key, view, js + '.js'), 'w')
+                myjs = json.dumps(doc[key][view][js],indent=4)
+                f.write(eval(myjs)) 
+    elif key != '_attachments':
+        f = open(os.path.join(dir, key), 'w')
+        f.write(json.dumps(doc[key],indent=4))        
     else:
-        if not os.path.exists(dir + "_attachments"):
-            os.mkdir(dir + "_attachments")
+        if not os.path.exists(os.path.join(dir, "_attachments")):
+            os.mkdir(os.path.join(dir, "_attachments"))
         for attachment in doc[key]:
             if not "stub" in doc[key][attachment]:
-                f = open(dir + "_attachments/" + attachment, 'wb')
+                f = open(os.path.join(dir, "_attachments/", attachment), 'wb')
                 data = base64.b64decode(doc[key][attachment]['data'])
                 f.write(data)
-
-            
-            
