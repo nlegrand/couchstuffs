@@ -8,15 +8,12 @@ uri = sys.argv.pop(1)
 
 if re.search("^/[a-zA-Z0-9\-_\.]+$", uri):
     conn.request("PUT",uri)
-elif re.search("^/[a-zA-Z0-9\-_\.]+/[a-zA-Z0-9\-_\./]+$", uri):
+else:
     json_data = ""
     for line in fileinput.input():
         json_data = json_data + line
         conn.request("PUT",uri,
                      json_data, {"Content-type": "application/json"}) 
-else:
-    print "haha"
-    sys.exit(1)
 
 r1 = conn.getresponse()
 
