@@ -6,17 +6,24 @@ json_data = {}
 
 for file in os.listdir("."):
     if file == 'views':
+        json_data[file] = {}
         for view in os.listdir(file):
+            json_data[file][view] = {}
             f = open(os.path.join(file, view, 'map.js'),'r')
             map = re.sub('"', '\"',f.read())
             f.close()
-            if os.path.isfile(os.path.join(file, view, 'map.js')):
-                f = open(file + '/' + view + '/map.js','r')
+            json_data[file][view] = { 'map' : map}
+            if os.path.isfile(os.path.join(file, view, 'reduce.js')):
+                f = open(os.path.join(file, view, '/reduce.js','r'))
                 reduce = re.sub('"', '\"',f.read())
                 f.close()
-            json_data['views'] = {view : { 'map' : map}}
-            if reduce:
                 json_data['views'][view]['reduce'] = reduce
+    elif file == 'shows' or file == 'lists':
+        json_data[file] = {}
+        for js in os.listdir(file):
+            f = open(os.path.join(file, js),'r')
+            json_data[file][js] = re.sub('"', '\"',f.read())
+            f.close()
     elif not re.search("~$", file) and file != '_attachments':
          json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':
