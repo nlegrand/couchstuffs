@@ -1,0 +1,13 @@
+#!/usr/local/bin/python2.6
+
+import fileinput, json
+
+json_data = ""
+
+for line in fileinput.input():
+    json_data = json_data + line
+
+doc = json.loads(json_data)
+
+for row in doc['rows']:
+    print row['id']

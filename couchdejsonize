@@ -14,14 +14,21 @@ if not os.path.exists(dir):
    os.mkdir(dir)
 
 for key in doc:
-    if key == 'views' or key == 'shows':
+    if key == 'views':
         for view in doc[key]:
             if not os.path.exists(os.path.join(os.path.join(dir, key, view))):
                 os.makedirs(os.path.join(dir, key, view))
             for js in doc[key][view]:
                 f = open(os.path.join(dir, key, view, js + '.js'), 'w')
                 myjs = json.dumps(doc[key][view][js],indent=4)
-                f.write(eval(myjs)) 
+                f.write(eval(myjs))
+    elif key == 'shows' or key == 'lists':
+        if not os.path.exists(os.path.join(os.path.join(dir, key))):
+            os.makedirs(os.path.join(dir, key))
+        for js in doc[key]:
+            f = open(os.path.join(dir,key, js),'w')
+            myjs = json.dumps(doc[key][js],indent=4)
+            f.write(eval(myjs))
     elif key != '_attachments':
         f = open(os.path.join(dir, key), 'w')
         f.write(json.dumps(doc[key],indent=4))        
