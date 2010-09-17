@@ -8,6 +8,8 @@ for file in os.listdir("."):
     if file == 'views':
         json_data[file] = {}
         for view in os.listdir(file):
+            if re.search('~$', view):
+                continue
             json_data[file][view] = {}
             f = open(os.path.join(file, view, 'map.js'),'r')
             map = re.sub('"', '\"',f.read())
@@ -21,14 +23,18 @@ for file in os.listdir("."):
     elif file == 'shows' or file == 'lists':
         json_data[file] = {}
         for js in os.listdir(file):
+            if re.search('~$', js):
+                continue
             f = open(os.path.join(file, js),'r')
-            json_data[file][js] = re.sub('"', '\"',f.read())
+            json_data[file][re.sub('\.js$', '', js)] = re.sub('"', '\"',f.read())
             f.close()
     elif not re.search("~$", file) and file != '_attachments':
-         json_data[file] = json.loads(open(file, "r").read())
+        json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':
         json_data['_attachments'] = {}
         for attachment in os.listdir('_attachments'):
+            if re.search('~$', attachment):
+                continue
             mime = mimetypes.guess_type('_attachments' + attachment)[0]
             b = open('_attachments/' + attachment, 'rb')
             content = base64.b64encode(b.read())
