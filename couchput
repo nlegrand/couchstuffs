@@ -1,21 +1,28 @@
 #!/usr/local/bin/python2.6
 
-import sys, fileinput, json, httplib, re
+import sys, fileinput, json, httplib, re, os
 
-conn = httplib.HTTPConnection("localhost:5984")
+connexion = httplib.HTTPConnection("localhost:5984")
 
 uri = sys.argv.pop(1)
 
 if re.search("^/[a-zA-Z0-9\-_\.]+$", uri):
-    conn.request("PUT",uri)
+    connexion.request("PUT",uri)
 else:
     json_data = ""
     for line in fileinput.input():
         json_data = json_data + line
-        conn.request("PUT",uri,
-                     json_data, {"Content-type": "application/json"}) 
+    connexion.request("PUT",uri,
+                 json_data, {"Content-type": "application/json"}) 
 
-r1 = conn.getresponse()
+http_response    = connexion.getresponse()
+couchdb_response = http_response.read()
 
-print r1.status, r1.reason
-print r1.read()
+if os.path.exists('_rev') and http_response.reason == "Created": #bump version
+    f = open('_rev','w')
+    resp = json.loads(couchdb_response)
+    f.write(json.dumps(resp["rev"]))
+
+sys.stderr.write(str(http_response.status) + " "
+                 + http_response.reason + "\n")
+sys.stdout.write(couchdb_response)
