@@ -1,10 +1,10 @@
 #!/usr/local/bin/python2.6
 
-import os, json, base64, subprocess, sys, mimetypes, httplib
+import os, json, base64, subprocess, sys, mimetypes, httplib, re
 
 
 file = sys.argv.pop()
-file_prefix = os.path.splitext(file)[0]
+file_prefix = re.sub('-.*', '', os.path.splitext(file)[0])
 id = sys.argv.pop()
 
 data = {}
@@ -15,6 +15,7 @@ command = "/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file
 os.system("/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg")
 os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + file_prefix + "-medium.jpg")
 os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + file_prefix + "-large.jpg")
+os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + file_prefix + "-huge.jpg")
 
 data['_attachments'] = {
     file : {
@@ -32,6 +33,10 @@ data['_attachments'] = {
     file_prefix + "-large.jpg" : {
         "content_type" : mimetypes.guess_type(file_prefix + "-large.jpg")[0],
         "data" : base64.b64encode(open(file_prefix + "-large.jpg", 'rb').read()),
+        },
+    file_prefix + "-huge.jpg" : {
+        "content_type" : mimetypes.guess_type(file_prefix + "-huge.jpg")[0],
+        "data" : base64.b64encode(open(file_prefix + "-huge.jpg", 'rb').read()),
         },
     }
 
