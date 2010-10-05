@@ -13,8 +13,10 @@ install:
 	${INSTALL} couchdejsonize ${DESTDIR}
 	${INSTALL} couchaddimage ${DESTDIR}
 	${INSTALL} couchgetid ${DESTDIR}
+	${INSTALL} strtojson ${DESTDIR}
+	${INSTALL} jsontostr ${DESTDIR}
 
-clean:
+deinstall:
 	rm ${DESTDIR}/couchattach
 	rm ${DESTDIR}/couchget
 	rm ${DESTDIR}/couchdel
@@ -23,3 +25,5 @@ clean:
 	rm ${DESTDIR}/couchdejsonize
 	rm ${DESTDIR}/couchaddimage
 	rm ${DESTDIR}/couchgetid
+	rm ${DESTDIR}/strtojson
+	rm ${DESTDIR}/jsontostr

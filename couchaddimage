@@ -1,42 +1,59 @@
-#!/usr/local/bin/python2.6
+#!/usr/bin/env python
 
-import os, json, base64, subprocess, sys, mimetypes, httplib
+import os, json, base64, subprocess, sys, mimetypes, httplib, re
 
 
 file = sys.argv.pop()
-file_prefix = os.path.splitext(file)[0]
+#file_prefix = re.sub('-.*', '', os.path.splitext(file)[0])
 id = sys.argv.pop()
 
 data = {}
 
-command = "/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg"
+print 'title ({"lang":"title", ...}):'
+data['title'] = json.loads(sys.stdin.readline())
 
+print 'tags ({"lang":["tag1","tag2",...], ...}):'
+data['tags'] = json.loads(sys.stdin.readline())
 
-os.system("/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + file_prefix + "-thumbnail.jpg")
-os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + file_prefix + "-medium.jpg")
-os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + file_prefix + "-large.jpg")
-os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + file_prefix + "-large.jpg")
+#don't want portrait thumbnail to be greater than paysage
+geometry = os.popen("identify -format \"%w %h\" " + file).read().replace("\n","").split(" ")
+if geometry[0] > geometry[1]:
+    thumbgeometry = "100"
+else:
+    thumbgeometry = "x75"
+    
+
+os.system("/usr/local/bin/convert -size " + thumbgeometry + " " + file 
+          + " -thumbnail " + thumbgeometry + " " + id + "-thumbnail.jpg")
+os.system("/usr/local/bin/convert -size 250 " + file + " -thumbnail 250 " + id + "-small.jpg")
+os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + id + "-medium.jpg")
+os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + id + "-large.jpg")
+os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + id + "-huge.jpg")
 
 data['_attachments'] = {
-    file : {
+    id + "-original.jpg" : {
         "content_type" : mimetypes.guess_type(file)[0],
         "data" : base64.b64encode(open(file, 'rb').read()),
         },
-    file_prefix + "-thumbnail.jpg" : {
-        "content_type" : mimetypes.guess_type(file_prefix + "-thumbnail.jpg")[0],
-        "data" : base64.b64encode(open(file_prefix + "-thumbnail.jpg", 'rb').read()),
+    id + "-thumbnail.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-thumbnail.jpg")[0],
+        "data" : base64.b64encode(open(id + "-thumbnail.jpg", 'rb').read()),
         },
-    file_prefix + "-medium.jpg" : {
-        "content_type" : mimetypes.guess_type(file_prefix + "-medium.jpg")[0],
-        "data" : base64.b64encode(open(file_prefix + "-medium.jpg", 'rb').read()),
+    id + "-small.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-small.jpg")[0],
+        "data" : base64.b64encode(open(id + "-small.jpg", 'rb').read()),
         },
-    file_prefix + "-large.jpg" : {
-        "content_type" : mimetypes.guess_type(file_prefix + "-large.jpg")[0],
-        "data" : base64.b64encode(open(file_prefix + "-large.jpg", 'rb').read()),
+    id + "-medium.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-medium.jpg")[0],
+        "data" : base64.b64encode(open(id + "-medium.jpg", 'rb').read()),
         },
-    file_prefix + "-huge.jpg" : {
-        "content_type" : mimetypes.guess_type(file_prefix + "-huge.jpg")[0],
-        "data" : base64.b64encode(open(file_prefix + "-huge.jpg", 'rb').read()),
+    id + "-large.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-large.jpg")[0],
+        "data" : base64.b64encode(open(id + "-large.jpg", 'rb').read()),
+        },
+    id + "-huge.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-huge.jpg")[0],
+        "data" : base64.b64encode(open(id + "-huge.jpg", 'rb').read()),
         },
     }
 
