@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.6
+#!/usr/bin/env python
 
 import os, json, base64, subprocess, sys, mimetypes, httplib, re
 
@@ -9,20 +9,39 @@ id = sys.argv.pop()
 
 data = {}
 
-os.system("/bin/cp " + file + " " + id + "-original.jpg")
-os.system("/usr/local/bin/convert -size 100 " + file + " -thumbnail 100 " + id + "-thumbnail.jpg")
+print 'title ({"lang":"title", ...}):'
+data['title'] = json.loads(sys.stdin.readline())
+
+print 'tags ({"lang":["tag1","tag2",...], ...}):'
+data['tags'] = json.loads(sys.stdin.readline())
+
+#don't want portrait thumbnail to be greater than paysage
+geometry = os.popen("identify -format \"%w %h\" " + file).read().replace("\n","").split(" ")
+if geometry[0] > geometry[1]:
+    thumbgeometry = "100"
+else:
+    thumbgeometry = "x75"
+    
+
+os.system("/usr/local/bin/convert -size " + thumbgeometry + " " + file 
+          + " -thumbnail " + thumbgeometry + " " + id + "-thumbnail.jpg")
+os.system("/usr/local/bin/convert -size 250 " + file + " -thumbnail 250 " + id + "-small.jpg")
 os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + id + "-medium.jpg")
 os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + id + "-large.jpg")
 os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + id + "-huge.jpg")
 
 data['_attachments'] = {
     id + "-original.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-original.jpg")[0],
-        "data" : base64.b64encode(open(id + "-original.jpg", 'rb').read()),
+        "content_type" : mimetypes.guess_type(file)[0],
+        "data" : base64.b64encode(open(file, 'rb').read()),
         },
     id + "-thumbnail.jpg" : {
         "content_type" : mimetypes.guess_type(id + "-thumbnail.jpg")[0],
         "data" : base64.b64encode(open(id + "-thumbnail.jpg", 'rb').read()),
+        },
+    id + "-small.jpg" : {
+        "content_type" : mimetypes.guess_type(id + "-small.jpg")[0],
+        "data" : base64.b64encode(open(id + "-small.jpg", 'rb').read()),
         },
     id + "-medium.jpg" : {
         "content_type" : mimetypes.guess_type(id + "-medium.jpg")[0],
