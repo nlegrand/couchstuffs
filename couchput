@@ -1,8 +1,38 @@
 #!/usr/bin/env python
 
-import sys, fileinput, json, httplib, re, os
+import sys, fileinput, json, httplib, re, getopt, ConfigParser, os
 
-connexion = httplib.HTTPConnection("localhost:5984")
+opts, args = getopt.getopt(sys.argv[1:], 'h:p:s:c:')
+
+host           = ""
+port           = ""
+config_file    = ""
+config_section = ""
+
+for o, a in opts:
+    sys.stderr.write(o + a + "\n")
+    if o == '-h':
+        host = a
+    if o == '-p':
+        port = a
+    if o == '-c':
+        config_file = a
+    if o == '-s':
+        config_section = a
+
+config = ConfigParser.ConfigParser()
+if not config_section:
+    config_section = 'default'
+if not config_file:
+    config_file = "~/.couchstuffs"
+config.read([os.path.expanduser(config_file)])
+
+if not host:
+    host = config.get(config_section, 'host')
+if not port:
+    port = config.get(config_section, 'port')
+
+connexion = httplib.HTTPConnection(host + ":" + port)
 
 uri = sys.argv.pop(1)
 
