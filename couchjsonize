@@ -20,14 +20,18 @@ for file in os.listdir("."):
                 reduce = re.sub('"', '\"',f.read())
                 f.close()
                 json_data['views'][view]['reduce'] = reduce
-    elif file == 'shows' or file == 'lists':
+    elif file == 'shows' or file == 'lists' or file == 'commonjs':
         json_data[file] = {}
         for js in os.listdir(file):
-            if re.search('~$', js):
+            if re.search("~$", js):
                 continue
             f = open(os.path.join(file, js),'r')
-            json_data[file][re.sub('\.js$', '', js)] = re.sub('"', '\"',f.read())
+            fdata = f.read()
             f.close()
+            json_data[file][re.sub('\.js$', '', js)] = fdata
+    elif re.search('^exports_', file):
+        f = open(file, 'r')
+        json_data[re.sub('^exports_','', file)] = "exports.str = " + json.dumps(f.read()) + " ;"
     elif not re.search("~$", file) and file != '_attachments':
         json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':

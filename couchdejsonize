@@ -20,7 +20,7 @@ for key in doc:
                 f = open(js_file, 'w')
                 f.write(eval(json.dumps(doc[key][view][js]
                                         , indent=4)))
-    elif key == 'shows' or key == 'lists':
+    elif key == 'shows' or key == 'lists' or key == 'commonjs':
         show_or_list_dir = os.path.join(dir, key)
         if not os.path.exists(show_or_list_dir):
             os.makedirs(show_or_list_dir)
@@ -30,8 +30,18 @@ for key in doc:
             f.write(eval(json.dumps(doc[key][js]
                                     , indent=4)))
     elif key != '_attachments':
+        value = eval(json.dumps(doc[key]))
+        if type(value) is str:
+           if re.search('^exports.str = ', value):
+              value = eval(re.sub('^exports.str = | ;$', '', value, 2))
+              key = "exports_" + key
+           else:
+              value = json.dumps(doc[key], indent=4)
+        else:
+           value = json.dumps(doc[key], indent=4)
         f = open(os.path.join(dir, key), 'w')
-        f.write(json.dumps(doc[key],indent=4))        
+        f.write(value)
+        f.close()
     else:
         attachments_dir = os.path.join(dir, "_attachments")
         if not os.path.exists(attachments_dir):
