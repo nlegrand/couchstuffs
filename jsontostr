@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
-import fileinput, json
+import fileinput, json, sys, codecs, locale
 
 data = ""
 for line in fileinput.input():
     data = data + line
 
 data = json.loads(data)
+#XXX utf-8 bullshit, was able to print utf8, but not to pipe or rediect
+#it. Details here:
+#http://wiki.python.org/moin/PrintFails
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 print data
+
