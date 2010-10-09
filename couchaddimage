@@ -7,13 +7,28 @@ file = sys.argv.pop()
 #file_prefix = re.sub('-.*', '', os.path.splitext(file)[0])
 id = sys.argv.pop()
 
-data = {}
+conn1 = httplib.HTTPConnection("localhost:5984")
+conn1.request("GET","/images/_design/mdi")
+r1 = conn1.getresponse()
+if r1.status != 200:
+    sys.stderr.write("Can't connect\n")
+    sys.exit()
 
-print 'title ({"lang":"title", ...}):'
-data['title'] = json.loads(sys.stdin.readline())
+data          = {}
+data['title'] = {}
+data['tags']  = {}
 
-print 'tags ({"lang":["tag1","tag2",...], ...}):'
-data['tags'] = json.loads(sys.stdin.readline())
+for lang in json.loads(r1.read())['langs']:
+    sys.stdout.write("title (" + lang + "): " )
+    data['title'][lang] = sys.stdin.readline().strip()
+    tag = ""
+    data['tags'][lang] = []
+    sys.stdout.write("tag (" + lang + ") or 'done': " )
+    tag = sys.stdin.readline().strip()
+    while tag != "done":
+        data['tags'][lang].append(tag)
+        sys.stdout.write("tag (" + lang + ") or 'done': " )
+        tag = sys.stdin.readline().strip()
 
 #don't want portrait thumbnail to be greater than paysage
 geometry = os.popen("identify -format \"%w %h\" " + file).read().replace("\n","").split(" ")
