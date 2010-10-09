@@ -21,48 +21,44 @@ if geometry[0] > geometry[1]:
     thumbgeometry = "100"
 else:
     thumbgeometry = "x75"
-    
+
+sizes = {
+    "thumbnail" : id + "-thumbnail.jpg",
+    "small"     : id + "-small.jpg",
+    "medium"    : id + "-medium.jpg",
+    "large"     : id + "-large.jpg",
+    "huge"      : id + "-huge.jpg",
+}    
 
 os.system("/usr/local/bin/convert -size " + thumbgeometry + " " + file 
-          + " -thumbnail " + thumbgeometry + " " + id + "-thumbnail.jpg")
-os.system("/usr/local/bin/convert -size 250 " + file + " -thumbnail 250 " + id + "-small.jpg")
-os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + id + "-medium.jpg")
-os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + id + "-large.jpg")
-os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + id + "-huge.jpg")
+          + " -thumbnail " + thumbgeometry + " " + sizes["thumbnail"])
+os.system("/usr/local/bin/convert -size 250 " + file + " -thumbnail 250 " + sizes["small"])
+os.system("/usr/local/bin/convert -size 500 " + file + " -thumbnail 500 " + sizes["medium"])
+os.system("/usr/local/bin/convert -size 1024 " + file + " -thumbnail 1024 " + sizes["large"])
+os.system("/usr/local/bin/convert -size 2048 " + file + " -thumbnail 2048 " + sizes["huge"])
 
-data['_attachments'] = {
-    id + "-original.jpg" : {
+data['_attachments'] = {}
+
+data['_attachments'][id + "-original.jpg"] = {
+    "content_type" : mimetypes.guess_type(file)[0],
+    "data" : base64.b64encode(open(file, 'rb').read()),
+}
+
+for size in sizes:
+    if not os.access(sizes[size], 0): #0 is F_OK value, F_OK doesn't work
+        sys.stderr.write(sizes[size] + "does not exist, skipping\n")
+        continue
+    else:
+        data['_attachments'][sizes[size]] = {
         "content_type" : mimetypes.guess_type(file)[0],
-        "data" : base64.b64encode(open(file, 'rb').read()),
-        },
-    id + "-thumbnail.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-thumbnail.jpg")[0],
-        "data" : base64.b64encode(open(id + "-thumbnail.jpg", 'rb').read()),
-        },
-    id + "-small.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-small.jpg")[0],
-        "data" : base64.b64encode(open(id + "-small.jpg", 'rb').read()),
-        },
-    id + "-medium.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-medium.jpg")[0],
-        "data" : base64.b64encode(open(id + "-medium.jpg", 'rb').read()),
-        },
-    id + "-large.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-large.jpg")[0],
-        "data" : base64.b64encode(open(id + "-large.jpg", 'rb').read()),
-        },
-    id + "-huge.jpg" : {
-        "content_type" : mimetypes.guess_type(id + "-huge.jpg")[0],
-        "data" : base64.b64encode(open(id + "-huge.jpg", 'rb').read()),
-        },
-    }
+        "data" : base64.b64encode(open(sizes[size], 'rb').read()),
+        }
 
-
-conn = httplib.HTTPConnection("localhost:5984")
-conn.request("PUT","/images/" + id,
+conn3 = httplib.HTTPConnection("localhost:5984")
+conn3.request("PUT","/images/" + id,
              json.dumps(data), {"Content-type": "application/json"})
-r1 = conn.getresponse()
+r3 = conn3.getresponse()
 
-print r1.status, r1.reason
-print r1.read()
+sys.stderr.write(str(r3.status) + " " + r3.reason + "\n")
+sys.stdout.write(r3.read() + "\n")
 
