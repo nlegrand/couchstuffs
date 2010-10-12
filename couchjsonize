@@ -29,10 +29,11 @@ for file in os.listdir("."):
             fdata = f.read()
             f.close()
             json_data[file][re.sub('\.js$', '', js)] = fdata
-    elif re.search('^exports_', file):
+    elif re.search('^exports_', file) and not re.search("~$", file):
         f = open(file, 'r')
         json_data[re.sub('^exports_','', file)] = "exports.str = " + json.dumps(f.read()) + " ;"
     elif not re.search("~$", file) and file != '_attachments':
+        #XXX faire une exception ici
         json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':
         json_data['_attachments'] = {}
@@ -40,6 +41,9 @@ for file in os.listdir("."):
             if re.search('~$', attachment):
                 continue
             mime = mimetypes.guess_type('_attachments' + attachment)[0]
+            if not mime:
+                sys.stderr.write("Can't guess _attachments/" + attachment + "mime-type")
+                continue
             b = open('_attachments/' + attachment, 'rb')
             content = base64.b64encode(b.read())
             json_data['_attachments'][attachment] = {
