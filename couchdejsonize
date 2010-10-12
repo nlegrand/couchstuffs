@@ -29,12 +29,17 @@ for key in doc:
             f = open(js_file,'w')
             f.write(eval(json.dumps(doc[key][js]
                                     , indent=4)))
-    elif key != '_attachments':
+    elif re.search("^template_",key):
+       file_name = "exports_" + key
+       f = open(os.path.join(dir, file_name), 'w')
+       f.write(json.loads(re.sub('^exports.str = | ;$', '', eval(json.dumps(doc[key])))).encode('UTF-8'))
+       f.close()
+    elif key != '_attachments' and not re.search("^template_",key):
         value = eval(json.dumps(doc[key]))
         if type(value) is str:
-           if re.search('^exports.str = ', value):
-              value = eval(re.sub('^exports.str = | ;$', '', value, 2))
-              key = "exports_" + key
+           if re.search('^"exports.str = ', value):
+              value = re.sub('^"exports.str = | ;$', '', json.loads(doc[key]), 2)
+              key = "lol_exports_" + key
            else:
               value = json.dumps(doc[key], indent=4)
         else:
