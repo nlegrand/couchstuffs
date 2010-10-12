@@ -34,15 +34,13 @@ if not port:
 
 connexion = httplib.HTTPConnection(host + ":" + port)
 
-uri = sys.argv.pop(1)
+print args[0]
 
-if re.search("^/[a-zA-Z0-9\-_\.]+$", uri):
-    connexion.request("PUT",uri)
+if re.search("^/[a-zA-Z0-9\-_\.]+$", args[0]):
+    connexion.request("PUT",args[0])
 else:
-    json_data = ""
-    for line in fileinput.input():
-        json_data = json_data + line
-    connexion.request("PUT",uri,
+    json_data = sys.stdin.read()
+    connexion.request("PUT",args[0],
                  json_data, {"Content-type": "application/json"}) 
 
 http_response    = connexion.getresponse()
