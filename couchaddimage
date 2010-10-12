@@ -68,6 +68,7 @@ for size in sizes:
         "content_type" : mimetypes.guess_type(file)[0],
         "data" : base64.b64encode(open(sizes[size], 'rb').read()),
         }
+        os.remove(sizes[size])
 
 conn3 = httplib.HTTPConnection("localhost:5984")
 conn3.request("PUT","/images/" + id,
