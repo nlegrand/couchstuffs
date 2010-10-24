@@ -35,7 +35,7 @@ if not host:
 if not port:
     port = config.get(config_section, 'port')
 
-connexion = httplib.HTTPConnection(host + ":" + port)
+connexion = httplib.HTTPConnection(host, port)
 
 connexion.request("GET", args[0])
 response = connexion.getresponse()
