@@ -1,4 +1,46 @@
-#!/bin/sh
+#!/usr/bin/env python
 
-curl -sX DELETE http://localhost:5984$1
+import sys, httplib, getopt, ConfigParser, os
+
+opts, args = getopt.getopt(sys.argv[1:], 'h:p:s:c:')
+
+def usage():
+    print "couchdelete -c <config> -s <config section> -h <host> -p <port> /<base>[/<ressource>]?rev=<rev>"
+
+host           = ""
+port           = ""
+config_file    = ""
+config_section = ""
+
+
+for o, a in opts:
+    if o == '-h':
+        host = a
+    if o == '-p':
+        port = a
+    if o == '-c':
+        config_file = a
+    if o == '-s':
+        config_section = a
+
+config = ConfigParser.ConfigParser()
+if not config_section:
+    config_section = 'default'
+if not config_file:
+    config_file = "~/.couchstuffs"
+config.read([os.path.expanduser(config_file)])
+
+if not host:
+    host = config.get(config_section, 'host')
+if not port:
+    port = config.get(config_section, 'port')
+
+connexion = httplib.HTTPConnection(host, port)
+
+connexion.request("DELETE", args[0])
+response = connexion.getresponse()
+sys.stderr.write(str(response.status) + " "
+                 + response.reason + "\n")
+sys.stdout.write(response.read())
+
 
