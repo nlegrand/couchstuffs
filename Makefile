@@ -9,8 +9,9 @@ install:
 	${INSTALL} couchget ${DESTDIR}
 	${INSTALL} couchdel ${DESTDIR}
 	${INSTALL} couchput ${DESTDIR}
-	${INSTALL} couchjsonize ${DESTDIR}
-	${INSTALL} couchdejsonize ${DESTDIR}
+	${INSTALL} couchcopy ${DESTDIR}
+	${INSTALL} couchexport ${DESTDIR}
+	${INSTALL} couchimport ${DESTDIR}
 	${INSTALL} couchaddimage ${DESTDIR}
 	${INSTALL} couchgetid ${DESTDIR}
 	${INSTALL} strtojson ${DESTDIR}
@@ -21,8 +22,9 @@ deinstall:
 	rm ${DESTDIR}/couchget
 	rm ${DESTDIR}/couchdel
 	rm ${DESTDIR}/couchput
-	rm ${DESTDIR}/couchjsonize
-	rm ${DESTDIR}/couchdejsonize
+	rm ${DESTDIR}/coucopy
+	rm ${DESTDIR}/couchexport
+	rm ${DESTDIR}/couchimport
 	rm ${DESTDIR}/couchaddimage
 	rm ${DESTDIR}/couchgetid
 	rm ${DESTDIR}/strtojson
