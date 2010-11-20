@@ -55,8 +55,11 @@ for file in file_list:
         f = open(file, 'r')
         json_data[re.sub('^exports_','', file)] = "exports.str = " + json.dumps(f.read()) + " ;"
     elif not re.search("^\.|~$", file) and file != '_attachments':
-        #XXX faire une exception ici
-        json_data[file] = json.loads(open(file, "r").read())
+        try:
+            json_data[file] = json.loads(open(file, "r").read())
+        except ValueError:
+            sys.stderr.write("file " + file + " doesn't look like a JSON file\n")
+            sys.exit(1)
     elif file == '_attachments':
         json_data['_attachments'] = {}
         for attachment in os.listdir('_attachments'):
