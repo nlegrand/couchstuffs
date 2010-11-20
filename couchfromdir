@@ -26,7 +26,7 @@ except ValueError:
 
 json_data = {}
 
-for file in os.listdir("."):
+for file in file_list:
     if file == 'views':
         json_data[file] = {}
         for view in os.listdir(file):
@@ -54,7 +54,7 @@ for file in os.listdir("."):
     elif re.search('^exports_', file) and not re.search("~$", file):
         f = open(file, 'r')
         json_data[re.sub('^exports_','', file)] = "exports.str = " + json.dumps(f.read()) + " ;"
-    elif not re.search("^.|~$", file) and file != '_attachments':
+    elif not re.search("^\.|~$", file) and file != '_attachments':
         #XXX faire une exception ici
         json_data[file] = json.loads(open(file, "r").read())
     elif file == '_attachments':
