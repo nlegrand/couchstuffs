@@ -11,7 +11,6 @@ install:
 	${INSTALL} couchcopy ${DESTDIR}
 	${INSTALL} couchfromdir ${DESTDIR}
 	${INSTALL} couchtodir ${DESTDIR}
-	${INSTALL} couchaddimage ${DESTDIR}
 	${INSTALL} couchgetid ${DESTDIR}
 	${INSTALL} strtojson ${DESTDIR}
 	${INSTALL} jsontostr ${DESTDIR}
@@ -23,7 +22,6 @@ deinstall:
 	rm ${DESTDIR}/couchcopy
 	rm ${DESTDIR}/couchfromdir
 	rm ${DESTDIR}/couchtodir
-	rm ${DESTDIR}/couchaddimage
 	rm ${DESTDIR}/couchgetid
 	rm ${DESTDIR}/strtojson
 	rm ${DESTDIR}/jsontostr
