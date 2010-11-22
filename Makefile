@@ -5,15 +5,15 @@ all:
 	@echo type make install
 
 install:
-	${INSTALL} couchget ${DESTDIR}
-	${INSTALL} couchdel ${DESTDIR}
-	${INSTALL} couchput ${DESTDIR}
-	${INSTALL} couchcopy ${DESTDIR}
-	${INSTALL} couchfromdir ${DESTDIR}
-	${INSTALL} couchtodir ${DESTDIR}
-	${INSTALL} couchgetid ${DESTDIR}
-	${INSTALL} strtojson ${DESTDIR}
-	${INSTALL} jsontostr ${DESTDIR}
+	${INSTALL} couchget.py ${DESTDIR}/couchget
+	${INSTALL} couchdel.py ${DESTDIR}/couchdel
+	${INSTALL} couchput.py ${DESTDIR}/couchput
+	${INSTALL} couchcopy.py ${DESTDIR}/couchcopy
+	${INSTALL} couchfromdir.py ${DESTDIR}/couchfromdir
+	${INSTALL} couchtodir.py ${DESTDIR}/couchtodir
+	${INSTALL} couchgetid.py ${DESTDIR}/couchgetid
+	${INSTALL} strtojson.py ${DESTDIR}/strtojson
+	${INSTALL} jsontostr.py ${DESTDIR}/jsontostr
 
 deinstall:
 	rm ${DESTDIR}/couchget
