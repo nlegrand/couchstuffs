@@ -5,7 +5,6 @@ all:
 	@echo type make install
 
 install:
-	${INSTALL} couchattach ${DESTDIR}
 	${INSTALL} couchget ${DESTDIR}
 	${INSTALL} couchdel ${DESTDIR}
 	${INSTALL} couchput ${DESTDIR}
@@ -18,7 +17,6 @@ install:
 	${INSTALL} jsontostr ${DESTDIR}
 
 deinstall:
-	rm ${DESTDIR}/couchattach
 	rm ${DESTDIR}/couchget
 	rm ${DESTDIR}/couchdel
 	rm ${DESTDIR}/couchput
