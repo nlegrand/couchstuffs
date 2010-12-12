@@ -14,9 +14,14 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import sys, fileinput, json, httplib, re, getopt, ConfigParser, os
+import sys, fileinput, json, httplib, re, getopt, ConfigParser, os, select
 
 opts, args = getopt.getopt(sys.argv[1:], 'h:p:s:c:')
+
+def usage():
+    print "couchput [-c <config>] [-s <config section>] [-h <host>] [-p <port>] /<base>"
+    sys.exit(1)
+
 
 host           = ""
 port           = ""
@@ -46,14 +51,26 @@ if not host:
 if not port:
     port = config.get(config_section, 'port')
 
-connexion = httplib.HTTPConnection(host + ":" + port)
+try:
+    base = args.pop()
+except IndexError:
+    usage()
 
-if re.search("^/[a-zA-Z0-9\-_\.]+$", args[0]):
-    connexion.request("PUT",args[0])
+if not re.search("^/", base):
+    usage()
+
+connexion = httplib.HTTPConnection(host, port)
+
+if select.select([sys.stdin],[],[],0)[0]:
+    data = json.loads(sys.stdin.read())
 else:
-    json_data = sys.stdin.read()
-    connexion.request("PUT",args[0],
-                 json_data, {"Content-type": "application/json"}) 
+    data = {}
+
+if not '_id' in data:
+    connexion.request("PUT", base)
+else:
+    connexion.request("PUT", base + "/" + data['_id'],
+                      json.dumps(data), {"Content-type": "application/json"}) 
 
 http_response    = connexion.getresponse()
 couchdb_response = http_response.read()
